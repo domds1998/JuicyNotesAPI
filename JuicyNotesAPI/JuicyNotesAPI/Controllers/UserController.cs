@@ -34,7 +34,7 @@ namespace JuicyNotesAPI.Controllers
         }
 
         
-        [HttpGet("authenticate")]
+        [HttpPost("authenticate")]
         public async Task<IActionResult> authenticate(AuthenticateRequest request)
         {
             var response = _services.authenticate(request);
