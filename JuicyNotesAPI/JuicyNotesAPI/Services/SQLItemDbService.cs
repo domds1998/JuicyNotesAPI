@@ -19,6 +19,8 @@ namespace JuicyNotesAPI.Services
         }
 
         public async Task<Item> addItem(AddingItemRequest request) {
+            
+            //TODO check if it there is note with the same title
 
             var item = new Item
             {

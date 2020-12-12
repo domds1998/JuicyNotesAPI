@@ -40,12 +40,17 @@ namespace JuicyNotesAPI.Controllers
         {
             var addedItem = _services.addItem(request);
 
+            return new OkObjectResult(addedItem);
         }
         [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> updateItem(UpdateItemRequest request)
         {
+            var updatedItem = _services.updateItem(request);
 
+            if (updatedItem == null) return new NotFoundResult();
+
+            return new OkObjectResult(updatedItem);
         }
 
     }

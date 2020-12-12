@@ -19,6 +19,9 @@ namespace JuicyNotesAPI.Services
 
         public Collection addCollection(CollectionAddRequest request, User user)
         {
+
+
+
             Collection newCollection = new Collection
             {
                 Name = request.Name,
