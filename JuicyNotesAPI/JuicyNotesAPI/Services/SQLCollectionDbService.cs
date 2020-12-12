@@ -15,7 +15,7 @@ namespace JuicyNotesAPI.Services
             _context = context;
         }
 
-        public Collection addCollection(CollectionAddRequest request)
+        public Collection addCollection(CollectionAddRequest request, User user)
         {
             Collection newCollection = new Collection
             {
@@ -24,7 +24,18 @@ namespace JuicyNotesAPI.Services
                 Color = request.Color
             };
 
+
             _context.Collections.AddAsync(newCollection);
+
+            _context.SaveChangesAsync();
+
+            UserCollection newUserCollection = new UserCollection
+            {
+                IdUser = user.IdUser,
+                IdCollection = newCollection.IdCollection
+            };
+
+            _context.UserCollections.AddAsync(newUserCollection);
 
             _context.SaveChangesAsync();
 

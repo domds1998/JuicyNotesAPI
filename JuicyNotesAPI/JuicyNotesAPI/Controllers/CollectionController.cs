@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using JuicyNotesAPI.DTOs.Requests;
+using JuicyNotesAPI.Models;
 using JuicyNotesAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -51,9 +52,8 @@ namespace JuicyNotesAPI.Controllers
 
         [HttpPost("add")]
         public async Task<IActionResult> getCollection(CollectionAddRequest request)
-        {
-         
-            return new OkObjectResult(null);
+        { 
+            return new OkObjectResult(_services.addCollection(request, (User)HttpContext.Items["User"]));
         }
 
         //TODO COLLECTION UPDATE
