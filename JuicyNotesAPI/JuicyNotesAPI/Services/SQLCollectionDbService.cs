@@ -19,6 +19,7 @@ namespace JuicyNotesAPI.Services
 
         public Collection addCollection(CollectionAddRequest request, User user)
         {
+            if (getCollection(request.Name, user) != null) return null;
             Collection newCollection = new Collection
             {
                 Name = request.Name,
@@ -89,10 +90,26 @@ namespace JuicyNotesAPI.Services
 
         public Collection getCollection(string name, User user)
         {
-            Collection collection = _context.Collections.Where(
-                c => c.Name == name
+            var queryCollection = _context.UserCollections.Join(
+                _context.Collections,
+                userCollection => userCollection.IdCollection,
+                collection => collection.IdCollection,
+                (userCollection, collection) => new
+                {
+                    idUser = userCollection.IdUser,
+                    idCollection = userCollection.IdCollection,
+                    collectionName = collection.Name
+                }
+                ).Where(
+                    x => x.collectionName == name && x.idUser == user.IdUser
                 ).FirstOrDefault();
 
+            if (queryCollection == null) return null;
+
+            var collection = _context.Collections.Where(
+                    c => c.IdCollection == queryCollection.idCollection
+                ).FirstOrDefault();
+        
             return collection;
         }
 
@@ -114,7 +131,16 @@ namespace JuicyNotesAPI.Services
 
         public Collection updateCollection(CollectionUpdateRequest request, User user)
         {
-            return new Collection();
+            var collection = getCollection(request.Name, user);
+
+            if (collection == null) return null;
+
+            collection.Name = request.NewName;
+            collection.Color = request.Color;
+
+            _context.SaveChangesAsync();
+
+            return collection;
         }
     }
 }
