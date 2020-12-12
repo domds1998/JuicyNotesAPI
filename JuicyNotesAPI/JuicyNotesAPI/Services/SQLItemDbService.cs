@@ -1,6 +1,7 @@
 ﻿
 using JuicyNotesAPI.DTOs.Requests;
 using JuicyNotesAPI.Models;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,9 +54,25 @@ namespace JuicyNotesAPI.Services
             return item;
         }
 
-        public Task<Item> updateItem(UpdateItemRequest request)
+        public Item updateItem(UpdateItemRequest request)
         {
-            throw new NotImplementedException();
+            var item = _context.Items.Where(i => i.IdItem == request.IdItem).FirstOrDefault();
+
+            if (item == null) return item;
+
+            var newItem = new Item
+            {
+                Title = request.Title,
+                Content = request.Content,
+                CreationDate = item.CreationDate,
+                KnowledgeRating = request.KnowledgeRating,
+                Type = item.Type
+            };
+            _context.Items.Attach(newItem);
+            
+            _context.SaveChanges();
+
+            return newItem;
         }
     }
 }
