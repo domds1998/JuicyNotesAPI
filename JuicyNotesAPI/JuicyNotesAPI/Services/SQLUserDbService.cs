@@ -1,9 +1,14 @@
 ﻿using JuicyNotesAPI.DTOs.Requests;
 using JuicyNotesAPI.DTOs.Responses;
 using JuicyNotesAPI.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -14,51 +19,113 @@ namespace JuicyNotesAPI.Services
 {
     public class SQLUserDbService : IUserDbService
     {
+        private readonly JuicyDBContext _context;
+        private readonly JWTSettings _jwtSettings;
+
+        public SQLUserDbService(JuicyDBContext  context, JWTSettings jwtSettings) {
+            _context = context;
+            _jwtSettings = jwtSettings;
+        }
+
         public AuthenticateResponse authenticate(AuthenticateRequest request)
         {
-            var emailString = request.Username;
-            bool isEmail = Regex.IsMatch(emailString, @"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z", RegexOptions.IgnoreCase);
+            var username = request.Username;
+            bool isEmail = Regex.IsMatch(username, @"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z", RegexOptions.IgnoreCase);
 
-            //var user;
+            User user;
+            if (isEmail)
+            {
+                user = _context.Users.Where(
+                        u => u.Email == username
+                    ).FirstOrDefault();
+            }
+            else
+            {
+                user = _context.Users.Where(
+                        u => u.Username == username
+                    ).FirstOrDefault();
+            }
 
+            if (user == null) return null;
 
-            return null;
+            var password = encodePassword(request.Password, user.Salt).hash;
+
+            if (password != user.Password) return new AuthenticateResponse(user, null);
+            return new AuthenticateResponse(user, generateJWTtoken(user));
+        }
+
+        public User register(RegistrationRequest request)
+        {
+            EncodedPassword password = encodePassword(request.Password, generateRandomSalt32());
+
+            User newUser = new User {
+                Username = request.Username,
+                Email = request.Email,
+                Password = password.hash,
+                Salt = password.salt
+            };
+
+            _context.Users.Add(newUser);
+
+            _context.SaveChanges();
+
+            return newUser;
+
         }
 
         public bool deleteUser(int id)
         {
-            throw new NotImplementedException();
+            User delete = _context.Users.Where(
+                    u => u.IdUser == id
+                ).FirstOrDefault();
+
+            if (delete == null) return false;
+
+            _context.Users.Remove(delete);
+
+            _context.SaveChanges();
+
+            return true;
         }
 
         public User getUser(int id)
         {
-            throw new NotImplementedException();
+            User user = _context.Users.Where(
+                    u => u.IdUser == id
+                ).FirstOrDefault();
+
+            return user;
         }
 
         public User getUserMail(string mail)
         {
-            throw new NotImplementedException();
+            User user = _context.Users.Where(
+                    u => u.Email == mail
+                ).FirstOrDefault();
+
+            return user;
         }
 
         public IEnumerable<User> getUsers()
         {
-            throw new NotImplementedException();
+            return _context.Users.ToList();
         }
 
-        public User getuserUsername(string userName)
+        public User getuserUsername(string username)
         {
-            throw new NotImplementedException();
+            User user = _context.Users.Where(
+                    u => u.Username == username
+                ).FirstOrDefault();
+
+            return user;
         }
 
-        public User register(User user)
-        {
-            throw new NotImplementedException();
-        }
+        
 
-        public User updateUser(int id)
+        /*public User updateUser(User user)
         {
-            throw new NotImplementedException();
-        }
+            
+        }*/
 
         private EncodedPassword encodePassword(string password, string salt)
         {
@@ -101,14 +168,14 @@ namespace JuicyNotesAPI.Services
             return salt;
         }
 
-        private string generateJWTtoken(Person person)
+        private string generateJWTtoken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_JwtSettings.SecretKey);
+            var key = Encoding.ASCII.GetBytes(_jwtSettings.secretKey);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[] { new Claim("idPerson", person.IdPeople.ToString()) }),
-                Expires = DateTime.UtcNow.Add(_JwtSettings.TokenLifetime),
+                Subject = new ClaimsIdentity(new[] { new Claim("IdUser", user.IdUser.ToString()) }),
+                Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);

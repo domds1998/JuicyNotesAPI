@@ -7,5 +7,6 @@ namespace JuicyNotesAPI.Models
 {
     public class JWTSettings
     {
+        public string secretKey { get; set; }
     }
 }

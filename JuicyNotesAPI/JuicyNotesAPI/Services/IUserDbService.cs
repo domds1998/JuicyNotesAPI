@@ -12,13 +12,13 @@ namespace JuicyNotesAPI.Services
 {
     public interface IUserDbService
     {
-        //public User register(User user);
+        public User register(RegistrationRequest request);
         public AuthenticateResponse authenticate(AuthenticateRequest request);
-        //public IEnumerable<User> getUsers();
-        //public User getUser(int id);
-        //public User getUserMail(string mail);
-        //public User getuserUsername(string userName);
-        //public bool deleteUser(int id);
+        public IEnumerable<User> getUsers();
+        public User getUser(int id);
+        public User getUserMail(string mail);
+        public User getuserUsername(string userName);
+        public bool deleteUser(int id);
         //public User updateUser(int id);
         
 
