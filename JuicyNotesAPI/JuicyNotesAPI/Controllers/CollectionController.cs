@@ -19,19 +19,14 @@ namespace JuicyNotesAPI.Controllers
         }
 
 
-        [HttpGet("all")]
-        public async Task<IActionResult> getAllCollections() {
-            return new OkObjectResult(_services.getAllCollections());
+        [Authorize]
+        [HttpGet("user")]
+        public async Task<IActionResult> getUserCollections() {
+            return new OkObjectResult(_services.getUserCollections((User)HttpContext.Items["User"]));
         }
 
         [Authorize]
-        [HttpGet("user/{id}")]
-        public async Task<IActionResult> getUserCollections(User user) {
-            return new OkObjectResult(_services.getUserCollections(user));
-        }
-
-        [Authorize]
-        [HttpGet("{id}")]
+        [HttpGet("{idCollection}")]
         public async Task<IActionResult> getCollection(int idCollection) {
             var collection = _services.getCollection(idCollection);
 
@@ -52,15 +47,27 @@ namespace JuicyNotesAPI.Controllers
 
         [Authorize]
         [HttpPost("add")]
-        public async Task<IActionResult> getCollection(CollectionAddRequest request)
-        { 
-            return new OkObjectResult(_services.addCollection(request, (User)HttpContext.Items["User"]));
+        public async Task<IActionResult> addCollection(CollectionAddRequest request)
+        {
+            var response = _services.addCollection(request, (User)HttpContext.Items["User"]);
+
+            if (response == null) return new BadRequestResult();
+
+            return new OkObjectResult(response);
         }
 
-        //TODO COLLECTION UPDATE
+        [Authorize]
+        [HttpPut("update")]
+        public async Task<IActionResult> updateCollection(CollectionUpdateRequest request) {
+            var response = _services.updateCollection(request, (User)HttpContext.Items["User"]);
+
+            if (response == null) return new BadRequestResult();
+
+            return new OkObjectResult(response);
+        } 
 
         [Authorize]
-        [HttpDelete("{id}")]
+        [HttpDelete("{idCollection}")]
         public async Task<IActionResult> deleteCollection(int idCollection) {
             var response = _services.deleteCollection(idCollection);
 
@@ -69,14 +76,5 @@ namespace JuicyNotesAPI.Controllers
             return new OkResult();
         }
 
-        [Authorize]
-        [HttpDelete("{name}")]
-        public async Task<IActionResult> deleteCollection(string name) {
-            var response = _services.deleteCollection(name, (User)HttpContext.Items["User"]);
-
-            if (!response) return new NotFoundResult();
-
-            return new OkResult();
-        }
     }
 }
