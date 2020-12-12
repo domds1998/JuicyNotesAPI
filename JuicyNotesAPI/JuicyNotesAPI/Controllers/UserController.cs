@@ -9,6 +9,7 @@ using JuicyNotesAPI.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging;
 
 namespace JuicyNotesAPI.Controllers
 {
@@ -25,22 +26,33 @@ namespace JuicyNotesAPI.Controllers
 
 
         [HttpPost("register")]
-        public async Task<IActionResult> register() {
-            return new OkObjectResult(null);
+        public async Task<IActionResult> register(RegistrationRequest request) {
+            var response = _services.register(request);
+            return new OkObjectResult(response);
         }
 
 
         [HttpGet("authenticate")]
         public async Task<IActionResult> authenticate(AuthenticateRequest request)
         {
-            return new OkObjectResult(null);
+            var response = _services.authenticate(request);
+
+            if (response == null) return new NotFoundObjectResult(new {message = $"User: {request.Username} Not Found"});
+
+            if (response.Token == null) return new UnauthorizedObjectResult(new { message = $"Cannot authenticate user: {request.Username}" });
+
+            return new OkObjectResult(response);
         }
 
 
         [Authorize]
-        [HttpGet("getUser/{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> getUser(int id) {
-            return new OkObjectResult(null);
+            var response = _services.getUser(id);
+
+            if (response == null) return new NotFoundObjectResult(new { message = "there is no such user" });
+
+            return new OkObjectResult(response);
         }
 
         //[HttpDelete("deleteUser/{id}")]
