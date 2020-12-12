@@ -15,6 +15,22 @@ namespace JuicyNotesAPI.Services
             _context = context;
         }
 
+        public Collection addCollection(CollectionAddRequest request)
+        {
+            Collection newCollection = new Collection
+            {
+                Name = request.Name,
+                CreationDate = request.CreationDate,
+                Color = request.Color
+            };
+
+            _context.Collections.AddAsync(newCollection);
+
+            _context.SaveChangesAsync();
+
+            return newCollection;
+        }
+
         public bool deleteCollection(int idCollection)
         {
             Collection delete = _context.Collections.Where(
@@ -25,7 +41,7 @@ namespace JuicyNotesAPI.Services
 
             _context.Collections.Remove(delete);
 
-            _context.SaveChanges();
+            _context.SaveChangesAsync();
 
             return true;
         }
@@ -40,7 +56,7 @@ namespace JuicyNotesAPI.Services
 
             _context.Collections.Remove(delete);
 
-            _context.SaveChanges();
+            _context.SaveChangesAsync();
 
             return true;
         }

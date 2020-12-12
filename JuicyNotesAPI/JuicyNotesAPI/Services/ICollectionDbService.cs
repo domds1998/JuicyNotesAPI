@@ -14,6 +14,6 @@ namespace JuicyNotesAPI.Services
         //public Collection updateCollection(CollectionUpdateRequest request);
         public bool deleteCollection(int idCollection);
         public bool deleteCollection(string name);
-
+        public Collection addCollection(CollectionAddRequest request);
     }
 }

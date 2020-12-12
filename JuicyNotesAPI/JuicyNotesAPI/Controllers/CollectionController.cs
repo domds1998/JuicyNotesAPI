@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using JuicyNotesAPI.DTOs.Requests;
 using JuicyNotesAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,40 +19,63 @@ namespace JuicyNotesAPI.Controllers
 
         [HttpGet("all")]
         public async Task<IActionResult> getAllCollections() {
-            return new OkObjectResult(null);
+            return new OkObjectResult(_services.getAllCollections());
         }
 
 
         [HttpGet("user/{id}")]
         public async Task<IActionResult> getUserCollections(int idUser) {
-            return new OkObjectResult(null);
+            return new OkObjectResult(_services.getUserCollections(idUser));
         }
 
 
         [HttpGet("{id}")]
         public async Task<IActionResult> getCollection(int idCollection) {
-            return new OkObjectResult(null);
+            var collection = _services.getCollection(idCollection);
+
+            if (collection == null) return new NotFoundResult();
+
+            return new OkObjectResult(collection);
         }
 
 
         [HttpGet("{name}")]
         public async Task<IActionResult> getCollection(string name) {
-            return new OkObjectResult(null);
+            var collection = _services.getCollection(name);
+
+            if (collection == null) return new NotFoundResult();
+
+            return new OkObjectResult(collection);
         }
 
+
+        [HttpPost("add")]
+        public async Task<IActionResult> getCollection(CollectionAddRequest request)
+        {
+         
+            return new OkObjectResult(null);
+        }
 
         //TODO COLLECTION UPDATE
 
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> deleteCollection(int idCollection) {
-            return new OkObjectResult(null);
+            var response = _services.deleteCollection(idCollection);
+
+            if (!response) return new NotFoundResult();
+
+            return new OkResult();
         }
 
 
         [HttpDelete("{name}")]
         public async Task<IActionResult> deleteCollection(string name) {
-            return new OkObjectResult(null);
+            var response = _services.deleteCollection(name);
+
+            if (!response) return new NotFoundResult();
+
+            return new OkResult();
         }
     }
 }
