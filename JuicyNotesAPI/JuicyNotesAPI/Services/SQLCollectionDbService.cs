@@ -56,7 +56,7 @@ namespace JuicyNotesAPI.Services
                 c => c.IdCollection == idCollection
                 ).FirstOrDefault();
 
-            return collection ?? new Collection();
+            return collection;
         }
 
         public Collection getCollection(string name)
@@ -65,7 +65,7 @@ namespace JuicyNotesAPI.Services
                 c => c.Name == name
                 ).FirstOrDefault();
 
-            return collection ?? new Collection();
+            return collection;
         }
 
         public IEnumerable<Collection> getUserCollections(int idUser)
@@ -78,7 +78,7 @@ namespace JuicyNotesAPI.Services
 
             foreach (UserCollection uc in userCollections){
                 Collection collection = getCollection(uc.IdCollection);
-                if (collection.Equals(new Collection())) collections.Append(collection);
+                if (collection != null) collections.Append(collection);
             }
 
             return collections;
