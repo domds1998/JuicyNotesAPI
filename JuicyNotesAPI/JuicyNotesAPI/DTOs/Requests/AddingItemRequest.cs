@@ -16,5 +16,6 @@ namespace JuicyNotesAPI.DTOs.Requests
         public int KnowledgeRating { get; set; }
         [Required]
         public string Type { get; set; }
+        public int IdCollection { get; set; }
     }
 }
