@@ -35,6 +35,7 @@ namespace JuicyNotesAPI
             });
 
             services.AddScoped<IUserDbService, SQLUserDbService>();
+            services.AddScoped<ICollectionDbService, SQLCollectionDbService>();
 
             services.Configure<JWTSettings>(Configuration.GetSection("JWTSettings"));
         }
