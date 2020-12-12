@@ -5,6 +5,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using JuicyNotesAPI.Attributes;
 using JuicyNotesAPI.DTOs.Requests;
+using JuicyNotesAPI.Models;
 using JuicyNotesAPI.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -19,6 +20,7 @@ namespace JuicyNotesAPI.Controllers
     {
 
         private readonly IUserDbService _services;
+        
 
         public UserController(IUserDbService services) {
             _services = services;
@@ -46,18 +48,16 @@ namespace JuicyNotesAPI.Controllers
 
 
         [Authorize]
-        [HttpGet("{id}")]
-        public async Task<IActionResult> getUser(int id) {
-            var response = _services.getUser(id);
+        [HttpGet]
+        public async Task<IActionResult> getUser() {
+
+            var user = (User)HttpContext.Items["User"];
+
+            var response = user;
 
             if (response == null) return new NotFoundObjectResult(new { message = "there is no such user" });
 
             return new OkObjectResult(response);
-        }
-        [Authorize]
-        [HttpGet]
-        public async Task<IActionResult> getUsers() {
-            return new OkObjectResult( _services.getUsers());
         }
         //[HttpDelete("deleteUser/{id}")]
 

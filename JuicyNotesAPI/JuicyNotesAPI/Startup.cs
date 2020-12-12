@@ -36,8 +36,10 @@ namespace JuicyNotesAPI
 
             services.AddScoped<IUserDbService, SQLUserDbService>();
             services.AddScoped<ICollectionDbService, SQLCollectionDbService>();
+            services.AddScoped<IItemDbService, SQLItemDbService>();
 
             services.Configure<JWTSettings>(Configuration.GetSection("JWTSettings"));
+            services.AddHttpContextAccessor();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -55,7 +57,8 @@ namespace JuicyNotesAPI
             app.UseCors(x => x
                 .AllowAnyOrigin()
                 .AllowAnyMethod()
-                .AllowAnyHeader());
+                .AllowAnyHeader()
+                );
 
             app.UseMiddleware<JWTMiddleware>();
 
