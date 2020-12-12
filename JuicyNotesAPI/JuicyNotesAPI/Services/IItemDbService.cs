@@ -9,10 +9,10 @@ namespace JuicyNotesAPI.Services
 {
     public interface IItemDbService
     {
-        public bool deleteItem(int id);
-        public Item updateItem(UpdateItemRequest request);
+        public Item deleteItem(int id);
+        public Task<Item> updateItem(UpdateItemRequest request);
 
-        public Item addItem(AddingItemRequest request);
+        public Task<Item> addItem(AddingItemRequest request);
 
     }
 }
