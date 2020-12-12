@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using JuicyNotesAPI.Attributes;
 using JuicyNotesAPI.DTOs.Requests;
 using JuicyNotesAPI.Models;
 using JuicyNotesAPI.Services;
@@ -23,13 +24,13 @@ namespace JuicyNotesAPI.Controllers
             return new OkObjectResult(_services.getAllCollections());
         }
 
-
+        [Authorize]
         [HttpGet("user/{id}")]
-        public async Task<IActionResult> getUserCollections(int idUser) {
-            return new OkObjectResult(_services.getUserCollections(idUser));
+        public async Task<IActionResult> getUserCollections(User user) {
+            return new OkObjectResult(_services.getUserCollections(user));
         }
 
-
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> getCollection(int idCollection) {
             var collection = _services.getCollection(idCollection);
@@ -39,17 +40,17 @@ namespace JuicyNotesAPI.Controllers
             return new OkObjectResult(collection);
         }
 
-
+        [Authorize]
         [HttpGet("{name}")]
         public async Task<IActionResult> getCollection(string name) {
-            var collection = _services.getCollection(name);
+            var collection = _services.getCollection(name, (User)HttpContext.Items["User"]);
 
             if (collection == null) return new NotFoundResult();
 
             return new OkObjectResult(collection);
         }
 
-
+        [Authorize]
         [HttpPost("add")]
         public async Task<IActionResult> getCollection(CollectionAddRequest request)
         { 
@@ -58,7 +59,7 @@ namespace JuicyNotesAPI.Controllers
 
         //TODO COLLECTION UPDATE
 
-
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> deleteCollection(int idCollection) {
             var response = _services.deleteCollection(idCollection);
@@ -68,10 +69,10 @@ namespace JuicyNotesAPI.Controllers
             return new OkResult();
         }
 
-
+        [Authorize]
         [HttpDelete("{name}")]
         public async Task<IActionResult> deleteCollection(string name) {
-            var response = _services.deleteCollection(name);
+            var response = _services.deleteCollection(name, (User)HttpContext.Items["User"]);
 
             if (!response) return new NotFoundResult();
 

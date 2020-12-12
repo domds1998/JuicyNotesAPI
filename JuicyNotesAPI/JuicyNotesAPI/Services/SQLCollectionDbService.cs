@@ -1,8 +1,10 @@
 using JuicyNotesAPI.DTOs.Requests;
 using JuicyNotesAPI.Models;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace JuicyNotesAPI.Services
 {
@@ -20,10 +22,9 @@ namespace JuicyNotesAPI.Services
             Collection newCollection = new Collection
             {
                 Name = request.Name,
-                CreationDate = request.CreationDate,
+                CreationDate = DateTime.Now,
                 Color = request.Color
             };
-
 
             _context.Collections.AddAsync(newCollection);
 
@@ -57,7 +58,7 @@ namespace JuicyNotesAPI.Services
             return true;
         }
 
-        public bool deleteCollection(string name)
+        public bool deleteCollection(string name, User user)
         {
             Collection delete = _context.Collections.Where(
                 c => c.Name == name
@@ -72,9 +73,9 @@ namespace JuicyNotesAPI.Services
             return true;
         }
 
-        public IEnumerable<Collection> getAllCollections()
+        public async Task<IActionResult> getAllCollections()
         {
-            return _context.Collections.ToList();
+            return new OkObjectResult(_context.Collections.ToList());
         }
 
         public Collection getCollection(int idCollection)
@@ -86,7 +87,7 @@ namespace JuicyNotesAPI.Services
             return collection;
         }
 
-        public Collection getCollection(string name)
+        public Collection getCollection(string name, User user)
         {
             Collection collection = _context.Collections.Where(
                 c => c.Name == name
@@ -95,25 +96,25 @@ namespace JuicyNotesAPI.Services
             return collection;
         }
 
-        public IEnumerable<Collection> getUserCollections(int idUser)
+        public async Task<IActionResult> getUserCollections(User user)
         {
             IEnumerable<UserCollection> userCollections = _context.UserCollections.Where(
-                    uc => uc.IdUser == idUser
+                    uc => uc.IdUser == user.IdUser
                 ).ToList();
 
             IEnumerable<Collection> collections = new List<Collection>();
 
             foreach (UserCollection uc in userCollections){
-                Collection collection = getCollection(uc.IdCollection);
+                var collection = getCollection(uc.IdCollection);
                 if (collection != null) collections.Append(collection);
             }
 
-            return collections;
+            return new OkObjectResult(collections);
         }
 
-        //public Collection updateCollection(CollectionUpdateRequest request)
-        //{
-            
-        //}
+        public Collection updateCollection(CollectionUpdateRequest request, User user)
+        {
+            return new Collection();
+        }
     }
 }
