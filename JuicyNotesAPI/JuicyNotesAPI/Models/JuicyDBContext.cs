@@ -25,7 +25,10 @@ namespace JuicyNotesAPI.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-           
+            if (!optionsBuilder.IsConfigured)
+            {
+
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -129,7 +132,6 @@ namespace JuicyNotesAPI.Models
                     .HasColumnName("email");
 
                 entity.Property(e => e.Name)
-                    .IsRequired()
                     .HasMaxLength(20)
                     .IsUnicode(false)
                     .HasColumnName("name");
@@ -146,7 +148,6 @@ namespace JuicyNotesAPI.Models
                     .HasColumnName("salt");
 
                 entity.Property(e => e.Surname)
-                    .IsRequired()
                     .HasMaxLength(40)
                     .IsUnicode(false)
                     .HasColumnName("surname");

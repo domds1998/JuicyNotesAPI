@@ -45,7 +45,7 @@ namespace JuicyNotesAPI.Controllers
         }
 
 
-        [Authorize]
+        //[Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> getUser(int id) {
             var response = _services.getUser(id);
@@ -55,6 +55,10 @@ namespace JuicyNotesAPI.Controllers
             return new OkObjectResult(response);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> getUsers() {
+            return new OkObjectResult( _services.getUsers());
+        }
         //[HttpDelete("deleteUser/{id}")]
 
         //[HttpPut("updateUser/{id}")]

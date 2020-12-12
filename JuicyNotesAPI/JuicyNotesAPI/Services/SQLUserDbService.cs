@@ -31,21 +31,11 @@ namespace JuicyNotesAPI.Services
         public AuthenticateResponse authenticate(AuthenticateRequest request)
         {
             var username = request.Username;
-            bool isEmail = Regex.IsMatch(username, @"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z", RegexOptions.IgnoreCase);
-
-            User user;
-            if (isEmail)
-            {
-                user = _context.Users.Where(
-                        u => u.Email == username
+            
+             var user = _context.Users.Where(
+                        u => u.Email == username || u.Username == username
                     ).FirstOrDefault();
-            }
-            else
-            {
-                user = _context.Users.Where(
-                        u => u.Username == username
-                    ).FirstOrDefault();
-            }
+            
 
             if (user == null) return null;
 
@@ -109,7 +99,7 @@ namespace JuicyNotesAPI.Services
 
         public IEnumerable<User> getUsers()
         {
-            return _context.Users.ToList();
+            return _context.Users.ToList<User>();
         }
 
         public User getuserUsername(string username)
