@@ -34,7 +34,7 @@ namespace JuicyNotesAPI
                 options.UseSqlServer(Configuration.GetConnectionString("ConnectionString"));
             });
 
-            services.AddTransient<IUserDbService, SQLUserDbService>();
+            services.AddScoped<IUserDbService, SQLUserDbService>();
 
             services.Configure<JWTSettings>(Configuration.GetSection("JWTSettings"));
         }

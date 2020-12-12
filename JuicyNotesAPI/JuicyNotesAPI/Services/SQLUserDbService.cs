@@ -3,6 +3,7 @@ using JuicyNotesAPI.DTOs.Responses;
 using JuicyNotesAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -22,9 +23,9 @@ namespace JuicyNotesAPI.Services
         private readonly JuicyDBContext _context;
         private readonly JWTSettings _jwtSettings;
 
-        public SQLUserDbService(JuicyDBContext  context, JWTSettings jwtSettings) {
+        public SQLUserDbService(JuicyDBContext  context, IOptions<JWTSettings> jwtSettings) {
             _context = context;
-            _jwtSettings = jwtSettings;
+            _jwtSettings = jwtSettings.Value;
         }
 
         public AuthenticateResponse authenticate(AuthenticateRequest request)

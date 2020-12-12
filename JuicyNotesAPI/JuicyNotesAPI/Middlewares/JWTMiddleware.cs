@@ -56,9 +56,9 @@ namespace JuicyNotesAPI.Middlewares
                 );
 
                 var jwtToken = (JwtSecurityToken)validatedToken;
-                var IdPerson = int.Parse(jwtToken.Claims.First(x => x.Type == "IdUser").Value);
+                var IdUser= int.Parse(jwtToken.Claims.First(x => x.Type == "IdUser").Value);
 
-                context.Items["User"] = service.getUser(IdPerson);
+                context.Items["User"] = service.getUser(IdUser);
 
             }
             catch
