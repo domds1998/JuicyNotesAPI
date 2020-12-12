@@ -1,6 +1,7 @@
 ﻿using JuicyNotesAPI.DTOs.Requests;
 using JuicyNotesAPI.DTOs.Responses;
 using JuicyNotesAPI.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Options;
@@ -81,6 +82,8 @@ namespace JuicyNotesAPI.Services
 
         public User getUser(int id)
         {
+
+            
             User user = _context.Users.Where(
                     u => u.IdUser == id
                 ).FirstOrDefault();
