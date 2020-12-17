@@ -22,58 +22,37 @@ namespace JuicyNotesAPI.Controllers
         [Authorize]
         [HttpGet("user")]
         public async Task<IActionResult> getUserCollections() {
-            return new OkObjectResult(_services.getUserCollections((User)HttpContext.Items["User"]));
+            return new OkObjectResult(await _services.getUserCollections((User)HttpContext.Items["User"]));
         }
 
         [Authorize]
         [HttpGet("{idCollection}")]
         public async Task<IActionResult> getCollection(int idCollection) {
-            var collection = _services.getCollection(idCollection);
-
-            if (collection == null) return new NotFoundResult();
-
-            return new OkObjectResult(collection);
+            return await _services.getCollection(idCollection);
         }
 
         [Authorize]
         [HttpGet("{name}")]
         public async Task<IActionResult> getCollection(string name) {
-            var collection = _services.getCollection(name, (User)HttpContext.Items["User"]);
-
-            if (collection == null) return new NotFoundResult();
-
-            return new OkObjectResult(collection);
+            return await _services.getCollection(name, (User)HttpContext.Items["User"]); ;
         }
 
         [Authorize]
         [HttpPost("add")]
-        public async Task<IActionResult> addCollection(CollectionAddRequest request)
-        {
-            var response = _services.addCollection(request, (User)HttpContext.Items["User"]);
-
-            if (response == null) return new BadRequestResult();
-
-            return new OkObjectResult(response);
+        public async Task<IActionResult> addCollection(CollectionAddRequest request){
+            return await _services.addCollection(request, (User)HttpContext.Items["User"]);
         }
 
         [Authorize]
         [HttpPut("update")]
         public async Task<IActionResult> updateCollection(CollectionUpdateRequest request) {
-            var response = _services.updateCollection(request, (User)HttpContext.Items["User"]);
-
-            if (response == null) return new BadRequestResult();
-
-            return new OkObjectResult(response);
+            return await _services.updateCollection(request, (User)HttpContext.Items["User"]);
         } 
 
         [Authorize]
         [HttpDelete("{idCollection}")]
         public async Task<IActionResult> deleteCollection(int idCollection) {
-            var response = _services.deleteCollection(idCollection);
-
-            if (!response) return new NotFoundResult();
-
-            return new OkResult();
+            return await _services.deleteCollection(idCollection);
         }
 
     }

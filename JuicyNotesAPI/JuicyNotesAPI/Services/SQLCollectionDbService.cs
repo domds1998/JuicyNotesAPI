@@ -20,7 +20,11 @@ namespace JuicyNotesAPI.Services
 
         public async Task<IActionResult> addCollection(CollectionAddRequest request, User user)
         {
-            if (getCollection(request.Name, user) != null) return null;
+            var result = (OkObjectResult)await getCollection(request.Name, user);
+            var collection = (Collection)result.Value;
+
+            if (collection != null) return new BadRequestResult();
+
             Collection newCollection = new Collection
             {
                 Name = request.Name,
@@ -47,9 +51,9 @@ namespace JuicyNotesAPI.Services
 
         public async Task<IActionResult> deleteCollection(int idCollection)
         {
-            Collection delete = _context.Collections.Where(
+            Collection delete = await _context.Collections.Where(
                 c => c.IdCollection == idCollection
-                ).FirstOrDefault();
+                ).FirstOrDefaultAsync();
 
             if (delete == null) return new NotFoundResult();
 
@@ -62,9 +66,9 @@ namespace JuicyNotesAPI.Services
 
         public async Task<IActionResult> deleteCollection(string name, User user)
         {
-            Collection delete = _context.Collections.Where(
+            Collection delete = await _context.Collections.Where(
                 c => c.Name == name
-                ).FirstOrDefault();
+                ).FirstOrDefaultAsync();
 
             if (delete == null) return new NotFoundResult();
 
@@ -85,6 +89,8 @@ namespace JuicyNotesAPI.Services
             Collection collection = await _context.Collections.Where(
                 c => c.IdCollection == idCollection
                 ).FirstOrDefaultAsync();
+
+            if (collection == null) return new NotFoundResult();
 
             return new OkObjectResult(collection);
         }
