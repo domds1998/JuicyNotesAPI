@@ -1,6 +1,7 @@
 using JuicyNotesAPI.DTOs.Requests;
 using JuicyNotesAPI.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace JuicyNotesAPI.Services
             _context = context;
         }
 
-        public Collection addCollection(CollectionAddRequest request, User user)
+        public async Task<IActionResult> addCollection(CollectionAddRequest request, User user)
         {
             if (getCollection(request.Name, user) != null) return null;
             Collection newCollection = new Collection
@@ -27,9 +28,9 @@ namespace JuicyNotesAPI.Services
                 Color = request.Color
             };
 
-            _context.Collections.AddAsync(newCollection);
+            await _context.Collections.AddAsync(newCollection);
 
-            _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
             UserCollection newUserCollection = new UserCollection
             {
@@ -37,60 +38,60 @@ namespace JuicyNotesAPI.Services
                 IdCollection = newCollection.IdCollection
             };
 
-            _context.UserCollections.AddAsync(newUserCollection);
+            await _context.UserCollections.AddAsync(newUserCollection);
 
-            _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
-            return newCollection;
+            return new OkObjectResult(newCollection);
         }
 
-        public bool deleteCollection(int idCollection)
+        public async Task<IActionResult> deleteCollection(int idCollection)
         {
             Collection delete = _context.Collections.Where(
                 c => c.IdCollection == idCollection
                 ).FirstOrDefault();
 
-            if (delete == null) return false;
+            if (delete == null) return new NotFoundResult();
 
             _context.Collections.Remove(delete);
 
-            _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
-            return true;
+            return new OkResult();
         }
 
-        public bool deleteCollection(string name, User user)
+        public async Task<IActionResult> deleteCollection(string name, User user)
         {
             Collection delete = _context.Collections.Where(
                 c => c.Name == name
                 ).FirstOrDefault();
 
-            if (delete == null) return false;
+            if (delete == null) return new NotFoundResult();
 
             _context.Collections.Remove(delete);
 
-            _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
-            return true;
+            return new OkResult();
         }
 
         public async Task<IActionResult> getAllCollections()
         {
-            return new OkObjectResult(_context.Collections.ToList());
+            return new OkObjectResult(await _context.Collections.ToListAsync());
         }
 
-        public Collection getCollection(int idCollection)
+        public async Task<IActionResult> getCollection(int idCollection)
         {
-            Collection collection = _context.Collections.Where(
+            Collection collection = await _context.Collections.Where(
                 c => c.IdCollection == idCollection
-                ).FirstOrDefault();
+                ).FirstOrDefaultAsync();
 
-            return collection;
+            return new OkObjectResult(collection);
         }
 
-        public Collection getCollection(string name, User user)
+        public async Task<IActionResult> getCollection(string name, User user)
         {
-            var queryCollection = _context.UserCollections.Join(
+            var queryCollection = await _context.UserCollections.Join(
                 _context.Collections,
                 userCollection => userCollection.IdCollection,
                 collection => collection.IdCollection,
@@ -102,45 +103,47 @@ namespace JuicyNotesAPI.Services
                 }
                 ).Where(
                     x => x.collectionName == name && x.idUser == user.IdUser
-                ).FirstOrDefault();
+                ).FirstOrDefaultAsync();
 
-            if (queryCollection == null) return null;
+            if (queryCollection == null) return new NotFoundResult();
 
-            var collection = _context.Collections.Where(
+            var collection = await _context.Collections.Where(
                     c => c.IdCollection == queryCollection.idCollection
-                ).FirstOrDefault();
+                ).FirstOrDefaultAsync();
         
-            return collection;
+            return new OkObjectResult(collection);
         }
 
         public async Task<IActionResult> getUserCollections(User user)
         {
-            IEnumerable<UserCollection> userCollections = _context.UserCollections.Where(
+            IEnumerable<UserCollection> userCollections = await _context.UserCollections.Where(
                     uc => uc.IdUser == user.IdUser
-                ).ToList();
+                ).ToListAsync();
 
             IEnumerable<Collection> collections = new List<Collection>();
 
             foreach (UserCollection uc in userCollections){
-                var collection = getCollection(uc.IdCollection);
+                var result = (OkObjectResult)await getCollection(uc.IdCollection);
+                var collection = (Collection)result.Value;
                 if (collection != null) collections.Append(collection);
             }
 
             return new OkObjectResult(collections);
         }
 
-        public Collection updateCollection(CollectionUpdateRequest request, User user)
+        public async Task<IActionResult> updateCollection(CollectionUpdateRequest request, User user)
         {
-            var collection = getCollection(request.Name, user);
-
+            var result = (OkObjectResult)await getCollection(request.Name, user);
+            var collection = (Collection)result.Value;
+            
             if (collection == null) return null;
 
             collection.Name = request.NewName;
             collection.Color = request.Color;
 
-            _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
-            return collection;
+            return new OkObjectResult(collection);
         }
     }
 }
