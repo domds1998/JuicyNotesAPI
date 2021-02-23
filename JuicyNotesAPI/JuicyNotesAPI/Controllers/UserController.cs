@@ -27,13 +27,13 @@ namespace JuicyNotesAPI.Controllers
             return new OkObjectResult(response);
         }
 
-        
+
         [HttpPost("authenticate")]
-        public async Task<IActionResult> Authenticate(AuthenticateRequest request)
+        public IActionResult Authenticate(AuthenticateRequest request)
         {
             var response = _services.Authenticate(request);
 
-            if (response == null) return new NotFoundObjectResult(new {message = $"User: {request.Username} Not Found"});
+            if (response == null) return new NotFoundObjectResult(new { message = $"User: {request.Username} Not Found" });
 
             if (response.Token == null) return new UnauthorizedObjectResult(new { message = $"Cannot authenticate user: {request.Username}" });
 
@@ -43,7 +43,8 @@ namespace JuicyNotesAPI.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> GetUser() {
+        public IActionResult GetUser()
+        {
 
             var user = (User)HttpContext.Items["User"];
 
