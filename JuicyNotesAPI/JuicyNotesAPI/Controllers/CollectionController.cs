@@ -21,38 +21,38 @@ namespace JuicyNotesAPI.Controllers
 
         [Authorize]
         [HttpGet("user")]
-        public async Task<IActionResult> getUserCollections() {
-            return new OkObjectResult(await _services.getUserCollections((User)HttpContext.Items["User"]));
+        public async Task<IActionResult> GetUserCollections() {
+            return new OkObjectResult(await _services.GetUserCollections((User)HttpContext.Items["User"]));
         }
 
         [Authorize]
         [HttpGet("{idCollection}")]
-        public async Task<IActionResult> getCollection(int idCollection) {
-            return await _services.getCollection(idCollection);
+        public async Task<IActionResult> GetCollection(int idCollection) {
+            return await _services.GetCollection(idCollection);
         }
 
         [Authorize]
         [HttpGet("{name}")]
-        public async Task<IActionResult> getCollection(string name) {
-            return await _services.getCollection(name, (User)HttpContext.Items["User"]); ;
+        public async Task<IActionResult> GetCollection(string name) {
+            return await _services.GetCollection(name, (User)HttpContext.Items["User"]); ;
         }
 
         [Authorize]
         [HttpPost("add")]
-        public async Task<IActionResult> addCollection(CollectionAddRequest request){
-            return await _services.addCollection(request, (User)HttpContext.Items["User"]);
+        public async Task<IActionResult> AddCollection(CollectionAddRequest request){
+            return await _services.AddCollection(request, (User)HttpContext.Items["User"]);
         }
 
         [Authorize]
         [HttpPut("update")]
-        public async Task<IActionResult> updateCollection(CollectionUpdateRequest request) {
-            return await _services.updateCollection(request, (User)HttpContext.Items["User"]);
+        public async Task<IActionResult> UpdateCollection(CollectionUpdateRequest request) {
+            return await _services.UpdateCollection(request, (User)HttpContext.Items["User"]);
         } 
 
         [Authorize]
         [HttpDelete("{idCollection}")]
-        public async Task<IActionResult> deleteCollection(int idCollection) {
-            return await _services.deleteCollection(idCollection);
+        public async Task<IActionResult> DeleteCollection(int idCollection) {
+            return await _services.DeleteCollection(idCollection);
         }
 
     }

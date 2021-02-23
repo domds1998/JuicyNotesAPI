@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using JuicyNotesAPI.Attributes;
 using JuicyNotesAPI.DTOs.Requests;
 using JuicyNotesAPI.Models;
 using JuicyNotesAPI.Services;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging;
 
 namespace JuicyNotesAPI.Controllers
 {
@@ -28,16 +22,16 @@ namespace JuicyNotesAPI.Controllers
 
 
         [HttpPost("register")]
-        public async Task<IActionResult> register(RegistrationRequest request) {
-            var response = _services.register(request);
+        public async Task<IActionResult> Register(RegistrationRequest request) {
+            var response = _services.Register(request);
             return new OkObjectResult(response);
         }
 
         
         [HttpPost("authenticate")]
-        public async Task<IActionResult> authenticate(AuthenticateRequest request)
+        public async Task<IActionResult> Authenticate(AuthenticateRequest request)
         {
-            var response = _services.authenticate(request);
+            var response = _services.Authenticate(request);
 
             if (response == null) return new NotFoundObjectResult(new {message = $"User: {request.Username} Not Found"});
 
@@ -49,7 +43,7 @@ namespace JuicyNotesAPI.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> getUser() {
+        public async Task<IActionResult> GetUser() {
 
             var user = (User)HttpContext.Items["User"];
 

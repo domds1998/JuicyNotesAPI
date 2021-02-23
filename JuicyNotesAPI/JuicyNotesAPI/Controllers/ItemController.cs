@@ -25,9 +25,9 @@ namespace JuicyNotesAPI.Controllers
         }
         [Authorize]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> deleteItem(int id)
+        public async Task<IActionResult> DeleteItem(int id)
         {
-            var deletedItem = _services.deleteItem(id);
+            var deletedItem = await _services.DeleteItem(id);
 
             if (deletedItem == null) return new BadRequestResult();
 
@@ -36,17 +36,17 @@ namespace JuicyNotesAPI.Controllers
         }
         [Authorize]
         [HttpPost("{id}")]
-        public async Task<IActionResult> addItem(AddingItemRequest request)
+        public async Task<IActionResult> AddItem(AddingItemRequest request)
         {
-            var addedItem = _services.addItem(request);
+            var addedItem = await _services.AddItem(request);
 
             return new OkObjectResult(addedItem);
         }
         [Authorize]
         [HttpPut("{id}")]
-        public async Task<IActionResult> updateItem(UpdateItemRequest request)
+        public async Task<IActionResult> UpdateItem(UpdateItemRequest request)
         {
-            var updatedItem = _services.updateItem(request);
+            var updatedItem = await _services.UpdateItem(request);
 
             if (updatedItem == null) return new NotFoundResult();
 
