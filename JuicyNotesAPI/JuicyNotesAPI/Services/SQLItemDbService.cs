@@ -3,7 +3,6 @@ using JuicyNotesAPI.DTOs.Requests;
 using JuicyNotesAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -18,7 +17,7 @@ namespace JuicyNotesAPI.Services
             _context = context;
         }
 
-        public async Task<Item> addItem(AddingItemRequest request) {
+        public async Task<IActionResult> AddItem(AddingItemRequest request) {
             
             //TODO check if it there is note with the same title
 
@@ -31,36 +30,36 @@ namespace JuicyNotesAPI.Services
                 Type = request.Type
             };
 
-            _context.Items.AddAsync(item);
-            _context.SaveChangesAsync();
+            await _context.Items.AddAsync(item);
+            await _context.SaveChangesAsync();
 
-            _context.CollectionItems.AddAsync(new CollectionItem{ 
+            await _context.CollectionItems.AddAsync(new CollectionItem{ 
                 IdItem = item.IdItem,
                 IdCollection = request.IdCollection
-            });;
+            });
 
-            _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
-            return item;
+            return new OkResult();
         }
 
-        public Item deleteItem(int id)
+        public async Task<IActionResult> DeleteItem(int id)
         {
             var item = _context.Items.Where(i => i.IdItem == id).FirstOrDefault();
 
-            if (item == null) return item;
+            if (item == null) return new BadRequestResult();
 
             _context.Items.Remove(item);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
-            return item;
+            return new OkResult();
         }
 
-        public Item updateItem(UpdateItemRequest request)
+        public async Task<IActionResult> UpdateItem(UpdateItemRequest request)
         {
             var item = _context.Items.Where(i => i.IdItem == request.IdItem).FirstOrDefault();
 
-            if (item == null) return item;
+            if (item == null) return new BadRequestResult();
 
             var newItem = new Item
             {
@@ -72,9 +71,9 @@ namespace JuicyNotesAPI.Services
             };
             _context.Items.Attach(newItem);
             
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
-            return newItem;
+            return new OkResult();
         }
     }
 }

@@ -1,18 +1,14 @@
 ﻿using JuicyNotesAPI.DTOs.Requests;
-using JuicyNotesAPI.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 namespace JuicyNotesAPI.Services
 {
     public interface IItemDbService
     {
-        public Item deleteItem(int id);
-        public Item updateItem(UpdateItemRequest request);
-
-        public Task<Item> addItem(AddingItemRequest request);
+        public Task<IActionResult> DeleteItem(int id);
+        public Task<IActionResult> UpdateItem(UpdateItemRequest request);
+        public Task<IActionResult> AddItem(AddingItemRequest request);
 
     }
 }

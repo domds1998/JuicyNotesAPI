@@ -1,24 +1,21 @@
 ﻿using JuicyNotesAPI.DTOs.Requests;
 using JuicyNotesAPI.DTOs.Responses;
 using JuicyNotesAPI.Models;
-using Microsoft.AspNetCore.Identity;
-using System;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace JuicyNotesAPI.Services
 {
     public interface IUserDbService
     {
-        public User register(RegistrationRequest request);
-        public AuthenticateResponse authenticate(AuthenticateRequest request);
-        public IEnumerable<User> getUsers();
-        public User getUser(int id);
-        public User getUserMail(string mail);
-        public User getuserUsername(string userName);
-        public bool deleteUser(int id);
+        public AuthenticateResponse Authenticate(AuthenticateRequest request);
+        public Task<IActionResult> Register(RegistrationRequest request);
+        public Task<IActionResult> GetUsers();
+        public Task<IActionResult> GetUser(int id);
+        public Task<IActionResult> GetUserMail(string mail);
+        public Task<IActionResult> GetUserUsername(string userName);
+        public Task<IActionResult> DeleteUser(int id);
         //public User updateUser(int id);
         
 

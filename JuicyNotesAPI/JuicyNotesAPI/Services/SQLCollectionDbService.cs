@@ -18,9 +18,9 @@ namespace JuicyNotesAPI.Services
             _context = context;
         }
 
-        public async Task<IActionResult> addCollection(CollectionAddRequest request, User user)
+        public async Task<IActionResult> AddCollection(CollectionAddRequest request, User user)
         {
-            var result = (OkObjectResult)await getCollection(request.Name, user);
+            var result = (OkObjectResult)await GetCollection(request.Name, user);
             var collection = (Collection)result.Value;
 
             if (collection != null) return new BadRequestResult();
@@ -49,7 +49,7 @@ namespace JuicyNotesAPI.Services
             return new OkObjectResult(newCollection);
         }
 
-        public async Task<IActionResult> deleteCollection(int idCollection)
+        public async Task<IActionResult> DeleteCollection(int idCollection)
         {
             Collection delete = await _context.Collections.Where(
                 c => c.IdCollection == idCollection
@@ -64,7 +64,7 @@ namespace JuicyNotesAPI.Services
             return new OkResult();
         }
 
-        public async Task<IActionResult> deleteCollection(string name, User user)
+        public async Task<IActionResult> DeleteCollection(string name, User user)
         {
             Collection delete = await _context.Collections.Where(
                 c => c.Name == name
@@ -79,12 +79,12 @@ namespace JuicyNotesAPI.Services
             return new OkResult();
         }
 
-        public async Task<IActionResult> getAllCollections()
+        public async Task<IActionResult> GetAllCollections()
         {
             return new OkObjectResult(await _context.Collections.ToListAsync());
         }
 
-        public async Task<IActionResult> getCollection(int idCollection)
+        public async Task<IActionResult> GetCollection(int idCollection)
         {
             Collection collection = await _context.Collections.Where(
                 c => c.IdCollection == idCollection
@@ -95,7 +95,7 @@ namespace JuicyNotesAPI.Services
             return new OkObjectResult(collection);
         }
 
-        public async Task<IActionResult> getCollection(string name, User user)
+        public async Task<IActionResult> GetCollection(string name, User user)
         {
             var queryCollection = await _context.UserCollections.Join(
                 _context.Collections,
@@ -120,7 +120,7 @@ namespace JuicyNotesAPI.Services
             return new OkObjectResult(collection);
         }
 
-        public async Task<IActionResult> getUserCollections(User user)
+        public async Task<IActionResult> GetUserCollections(User user)
         {
             IEnumerable<UserCollection> userCollections = await _context.UserCollections.Where(
                     uc => uc.IdUser == user.IdUser
@@ -129,7 +129,7 @@ namespace JuicyNotesAPI.Services
             IEnumerable<Collection> collections = new List<Collection>();
 
             foreach (UserCollection uc in userCollections){
-                var result = (OkObjectResult)await getCollection(uc.IdCollection);
+                var result = (OkObjectResult)await GetCollection(uc.IdCollection);
                 var collection = (Collection)result.Value;
                 if (collection != null) collections.Append(collection);
             }
@@ -137,9 +137,9 @@ namespace JuicyNotesAPI.Services
             return new OkObjectResult(collections);
         }
 
-        public async Task<IActionResult> updateCollection(CollectionUpdateRequest request, User user)
+        public async Task<IActionResult> UpdateCollection(CollectionUpdateRequest request, User user)
         {
-            var result = (OkObjectResult)await getCollection(request.Name, user);
+            var result = (OkObjectResult)await GetCollection(request.Name, user);
             var collection = (Collection)result.Value;
             
             if (collection == null) return null;

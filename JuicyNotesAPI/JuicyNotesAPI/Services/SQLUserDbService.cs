@@ -1,9 +1,7 @@
 ﻿using JuicyNotesAPI.DTOs.Requests;
 using JuicyNotesAPI.DTOs.Responses;
 using JuicyNotesAPI.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -13,9 +11,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Xml.Serialization;
 
 namespace JuicyNotesAPI.Services
 {
@@ -29,7 +25,7 @@ namespace JuicyNotesAPI.Services
             _jwtSettings = jwtSettings.Value;
         }
 
-        public AuthenticateResponse authenticate(AuthenticateRequest request)
+        public AuthenticateResponse Authenticate(AuthenticateRequest request)
         {
             var username = request.Username;
             
@@ -40,15 +36,15 @@ namespace JuicyNotesAPI.Services
 
             if (user == null) return null;
 
-            var password = encodePassword(request.Password, user.Salt).hash;
+            var password = EncodePassword(request.Password, user.Salt).hash;
 
             if (password != user.Password) return new AuthenticateResponse(user, null);
             return new AuthenticateResponse(user, generateJWTtoken(user));
         }
 
-        public User register(RegistrationRequest request)
+        public async Task<IActionResult> Register(RegistrationRequest request)
         {
-            EncodedPassword password = encodePassword(request.Password, generateRandomSalt32());
+            EncodedPassword password = EncodePassword(request.Password, generateRandomSalt32());
 
             User newUser = new User {
                 Username = request.Username,
@@ -57,61 +53,65 @@ namespace JuicyNotesAPI.Services
                 Salt = password.salt
             };
 
-            _context.Users.Add(newUser);
+            await _context.Users.AddAsync(newUser);
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
-            return newUser;
+            return new OkObjectResult(newUser);
 
         }
 
-        public bool deleteUser(int id)
+        public async Task<IActionResult> DeleteUser(int id)
         {
             User delete = _context.Users.Where(
                     u => u.IdUser == id
                 ).FirstOrDefault();
 
-            if (delete == null) return false;
+            if (delete == null) return new BadRequestResult();
 
             _context.Users.Remove(delete);
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
-            return true;
+            return new OkResult();
         }
 
-        public User getUser(int id)
+        public async Task<IActionResult> GetUser(int id)
         {
-
-            
             User user = _context.Users.Where(
                     u => u.IdUser == id
                 ).FirstOrDefault();
 
-            return user;
+            if (user == null) return new BadRequestResult();
+
+            return new OkObjectResult(user);
         }
 
-        public User getUserMail(string mail)
+        public async Task<IActionResult> GetUserMail(string mail)
         {
             User user = _context.Users.Where(
                     u => u.Email == mail
                 ).FirstOrDefault();
 
-            return user;
+            if (user == null) return new BadRequestResult();
+
+            return new OkObjectResult(user);
         }
 
-        public IEnumerable<User> getUsers()
+        public async Task<IActionResult> GetUsers()
         {
-            return _context.Users.ToList<User>();
+            return new OkObjectResult(_context.Users.ToList());
         }
 
-        public User getuserUsername(string username)
+        public async Task<IActionResult> GetUserUsername(string username)
         {
             User user = _context.Users.Where(
                     u => u.Username == username
                 ).FirstOrDefault();
 
-            return user;
+            if (user == null) return new BadRequestResult();
+
+            return new OkObjectResult(user);
         }
 
         
@@ -121,7 +121,7 @@ namespace JuicyNotesAPI.Services
             
         }*/
 
-        private EncodedPassword encodePassword(string password, string salt)
+        private EncodedPassword EncodePassword(string password, string salt)
         {
             var encodedPassword = $"{password}{salt}";
 
