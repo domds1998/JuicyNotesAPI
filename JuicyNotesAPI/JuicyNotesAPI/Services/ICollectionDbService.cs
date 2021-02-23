@@ -7,13 +7,13 @@ namespace JuicyNotesAPI.Services
 {
     public interface ICollectionDbService
     {
-        public Task<IActionResult> getAllCollections();
-        public Task<IActionResult> getUserCollections(User user);
-        public Task<IActionResult> getCollection(int idCollection);
-        public Task<IActionResult> getCollection(string name, User user);
-        public Task<IActionResult> updateCollection(CollectionUpdateRequest request, User user);
-        public Task<IActionResult> deleteCollection(int idCollection);
-        public Task<IActionResult> deleteCollection(string name, User user);
-        public Task<IActionResult> addCollection(CollectionAddRequest request, User user);
+        public Task<IActionResult> GetAllCollections();
+        public Task<IActionResult> GetUserCollections(User user);
+        public Task<IActionResult> GetCollection(int idCollection);
+        public Task<IActionResult> GetCollection(string name, User user);
+        public Task<IActionResult> UpdateCollection(CollectionUpdateRequest request, User user);
+        public Task<IActionResult> DeleteCollection(int idCollection);
+        public Task<IActionResult> DeleteCollection(string name, User user);
+        public Task<IActionResult> AddCollection(CollectionAddRequest request, User user);
     }
 }
