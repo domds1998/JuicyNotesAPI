@@ -1,5 +1,4 @@
-﻿
-using JuicyNotesAPI.DTOs.Requests;
+﻿using JuicyNotesAPI.DTOs.Requests;
 using JuicyNotesAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;

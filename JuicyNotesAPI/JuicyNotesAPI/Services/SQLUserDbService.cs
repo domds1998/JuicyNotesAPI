@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -39,12 +38,12 @@ namespace JuicyNotesAPI.Services
             var password = EncodePassword(request.Password, user.Salt).hash;
 
             if (password != user.Password) return new AuthenticateResponse(user, null);
-            return new AuthenticateResponse(user, generateJWTtoken(user));
+            return new AuthenticateResponse(user, GenerateJWTtoken(user));
         }
 
         public async Task<IActionResult> Register(RegistrationRequest request)
         {
-            EncodedPassword password = EncodePassword(request.Password, generateRandomSalt32());
+            EncodedPassword password = EncodePassword(request.Password, GenerateRandomSalt32());
 
             User newUser = new User {
                 Username = request.Username,
@@ -146,9 +145,7 @@ namespace JuicyNotesAPI.Services
         }
 
 
-
-
-        private string generateRandomSalt32()
+        private string GenerateRandomSalt32()
         {
             string salt;
             var randomNumbers = new byte[24];
@@ -162,7 +159,7 @@ namespace JuicyNotesAPI.Services
             return salt;
         }
 
-        private string generateJWTtoken(User user)
+        private string GenerateJWTtoken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_jwtSettings.secretKey);

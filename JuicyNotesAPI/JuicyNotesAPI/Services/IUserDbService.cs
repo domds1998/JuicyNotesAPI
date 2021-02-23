@@ -1,8 +1,6 @@
 ﻿using JuicyNotesAPI.DTOs.Requests;
 using JuicyNotesAPI.DTOs.Responses;
-using JuicyNotesAPI.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace JuicyNotesAPI.Services
