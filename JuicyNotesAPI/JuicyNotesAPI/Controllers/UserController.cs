@@ -23,7 +23,7 @@ namespace JuicyNotesAPI.Controllers
 
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegistrationRequest request) {
-            var response = _services.Register(request);
+            var response = await _services.Register(request);
             return new OkObjectResult(response);
         }
 
@@ -47,11 +47,9 @@ namespace JuicyNotesAPI.Controllers
 
             var user = (User)HttpContext.Items["User"];
 
-            var response = user;
+            if (user == null) return new NotFoundObjectResult(new { message = "there is no such user" });
 
-            if (response == null) return new NotFoundObjectResult(new { message = "there is no such user" });
-
-            return new OkObjectResult(response);
+            return new OkObjectResult(user);
         }
         //[HttpDelete("deleteUser/{id}")]
 
